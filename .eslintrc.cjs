@@ -14,6 +14,7 @@ module.exports = {
     rules: {
         // Disable <Fragment> => <> replacement. Feel free to change
         "react/jsx-fragments": "off",
+        "react/react-in-jsx-scope": "off",
         // Disable prefer default export
         "import/prefer-default-export": "off",
         "@typescript-eslint/object-curly-spacing": "off",
