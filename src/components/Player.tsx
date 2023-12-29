@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import { RigidBody, RigidBodyTypeString } from '@react-three/rapier';
-import React, { useRef } from 'react';
+import * as RAPIER from '@dimforge/rapier3d-compat';
+import { RigidBody, useRapier } from '@react-three/rapier';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { usePersonControls } from '../utils/hooks/usePersonControls.ts';
 
@@ -11,9 +12,14 @@ const sideVector = new THREE.Vector3();
 
 export function Player() {
   const playerRef = useRef<any>();
+  const rapier = useRapier();
   const {
     forward, backward, left, right, jump,
   } = usePersonControls();
+
+  const doJump = () => {
+    playerRef.current.setLinvel({ x: 0, y: 8, z: 0 });
+  };
 
   useFrame(state => {
     if (!playerRef.current) return;
@@ -26,6 +32,15 @@ export function Player() {
 
     playerRef.current.wakeUp();
     playerRef.current.setLinvel({ x: direction.x, y: velocity.y, z: direction.z });
+    const { world } = rapier;
+    const ray = world.castRay(
+      new RAPIER.Ray(playerRef.current.translation(), { x: 0, y: -1, z: 0 }),
+      0,
+      true,
+    );
+    const grounded = ray && ray.collider && Math.abs(ray.toi) <= 1;
+
+    if (jump && grounded) doJump();
   });
 
   return (
