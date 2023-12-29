@@ -50,7 +50,7 @@ export function Player() {
 
   return (
     <RigidBody position={[0, 1, -2]} ref={playerRef}>
-      <mesh>
+      <mesh castShadow>
         <capsuleGeometry args={[0.5, 0.5]} />
       </mesh>
     </RigidBody>

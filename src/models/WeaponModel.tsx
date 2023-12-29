@@ -19,7 +19,7 @@ export function WeaponModel(props) {
         <group
           position={[36.502, -180.5, -0.676]}
           rotation={[-Math.PI / 2, Math.PI / 2, 0]}
-          scale={28.703}
+          scale={1}
         >
           <mesh
             castShadow
