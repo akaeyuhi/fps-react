@@ -28,7 +28,8 @@ export function Player() {
 
     frontVector.set(0, 0, +backward - +forward);
     sideVector.set(+left - +right, 0, 0);
-    direction.subVectors(frontVector, sideVector).normalize().multiplyScalar(MOVE_SPEED);
+    direction.subVectors(frontVector, sideVector).normalize().multiplyScalar(MOVE_SPEED)
+      .applyEuler(state.camera.rotation);
 
     playerRef.current.wakeUp();
     playerRef.current.setLinvel({ x: direction.x, y: velocity.y, z: direction.z });
@@ -38,9 +39,13 @@ export function Player() {
       0,
       true,
     );
-    const grounded = ray && ray.collider && Math.abs(ray.toi) <= 1;
+    const grounded = ray && ray.collider && Math.abs(ray.toi) <= 1.5;
 
     if (jump && grounded) doJump();
+
+    // moving camera
+    const { x, y, z } = playerRef.current.translation();
+    state.camera.position.set(x, y, z);
   });
 
   return (
