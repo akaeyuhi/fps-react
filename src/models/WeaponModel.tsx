@@ -5,11 +5,11 @@ License: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
 Source: https://sketchfab.com/3d-models/m4a1-33107f38b23c45cc8103768c0e961cdf
 Title: M4A1
 */
-
-import React, { useRef } from 'react';
+/* eslint-disable */
+// @ts-ignore
 import { useGLTF } from '@react-three/drei';
 
-export function Model(props) {
+export function WeaponModel(props) {
   const { nodes, materials } = useGLTF('/m4a1.glb');
   return (
     <group {...props} dispose={null}>
@@ -22,13 +22,13 @@ export function Model(props) {
           <mesh
             castShadow
             receiveShadow
-            geometry={nodes['Cylinder006_M4-1_0'].geometry}
+            geometry={nodes['Cylinder006_M4-1_0']['geometry']}
             material={materials['M4-1']}
           />
           <mesh
             castShadow
             receiveShadow
-            geometry={nodes['Cylinder006_M4-2_0'].geometry}
+            geometry={nodes['Cylinder006_M4-2_0']['geometry']}
             material={materials['M4-2']}
           />
         </group>
