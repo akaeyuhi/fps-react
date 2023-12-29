@@ -19,6 +19,7 @@ module.exports = {
         // Disable prefer default export
         "import/prefer-default-export": "off",
         "@typescript-eslint/object-curly-spacing": "off",
+        "@typescript-eslint/no-explicit-any": "off",
         "react/jsx-filename-extension": [0],
         "import/extensions": "off",
         "import/no-extraneous-dependencies": "off",
