@@ -1,5 +1,4 @@
 // import { useState } from 'react'
-import 'src/App.css';
 import { Sky } from '@react-three/drei';
 import { Ground } from './components/Ground';
 
