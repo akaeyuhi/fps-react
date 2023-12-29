@@ -1,12 +1,11 @@
-import { RigidBody } from "@react-three/rapier";
-import { FC } from 'react';
+import { RigidBody } from '@react-three/rapier';
 import * as THREE from 'three';
 
 interface Props {
   position: number[]
 }
 
-export const Cube: FC<Props> = ({ position }) => {
+export function Cube({ position }: Props) {
   const vector = new THREE.Vector3(...position);
   return (
     <RigidBody position={vector}>

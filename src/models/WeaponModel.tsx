@@ -7,10 +7,12 @@ Title: M4A1
 */
 /* eslint-disable */
 // @ts-ignore
+import React, { useRef } from 'react';
+// @ts-ignore
 import { useGLTF } from '@react-three/drei';
 
 export function WeaponModel(props) {
-  const { nodes, materials } = useGLTF('/m4a1.glb');
+  const { nodes, materials } = useGLTF('m4a1.glb');
   return (
     <group {...props} dispose={null}>
       <group scale={0.01}>
@@ -37,4 +39,4 @@ export function WeaponModel(props) {
   );
 }
 
-useGLTF.preload('/m4a1.glb');
+useGLTF.preload('m4a1.glb');
