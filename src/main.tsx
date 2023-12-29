@@ -8,7 +8,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <div id="container">
       <div className="aim" />
-      <Canvas camera={{ fov: 45, position: [0, 5, 0] }}>
+      <Canvas camera={{ fov: 45, position: [0, 5, 0] }} shadows>
         <App />
       </Canvas>
     </div>
