@@ -1,5 +1,5 @@
 // import { useState } from 'react'
-import { Sky } from '@react-three/drei';
+import { PointerLockControls, Sky } from '@react-three/drei';
 import { Ground } from './components/Ground';
 
 function App() {
@@ -7,6 +7,7 @@ function App() {
 
   return (
     <>
+      <PointerLockControls />
       <Sky sunPosition={[100, 20, 100]} />
       <ambientLight intensity={1.5} />
       <Ground />
