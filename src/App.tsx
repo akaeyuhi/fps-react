@@ -4,6 +4,7 @@ import { Physics } from '@react-three/rapier';
 import { Ground } from './components/Ground';
 import { Player } from './components/Player.tsx';
 import { Cubes } from './components/Cubes.tsx';
+import { WeaponModel } from './models/WeaponModel.tsx';
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -18,6 +19,9 @@ function App() {
         <Player />
         <Cubes />
       </Physics>
+      <group position={[0, 3, 0]}>
+        <WeaponModel />
+      </group>
     </>
   );
 }
