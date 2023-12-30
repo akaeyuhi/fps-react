@@ -4,7 +4,7 @@ import * as TWEEN from '@tweenjs/tween.js';
 import { CapsuleCollider, RigidBody, useRapier } from '@react-three/rapier';
 import { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Weapon } from './Weapon.tsx';
+import { useAimingStore, Weapon } from './Weapon.tsx';
 import { usePersonControls } from '../utils/hooks/usePersonControls.ts';
 
 const MOVE_SPEED = 5;
@@ -12,6 +12,7 @@ const direction = new THREE.Vector3();
 const frontVector = new THREE.Vector3();
 const sideVector = new THREE.Vector3();
 const rotation = new THREE.Vector3();
+const easing = TWEEN.Easing.Quadratic.Out;
 
 export function Player() {
   const playerRef = useRef<any>();
@@ -24,6 +25,7 @@ export function Player() {
   const [swayingNewPosition, setSwayingNewPosition] = useState(new THREE.Vector3(-0.005, 0.005, 0));
   const [swayingDuration, setSwayingDuration] = useState(1000);
   const [isMoving, setIsMoving] = useState(false);
+  const isAiming = useAimingStore((state) => state.isAiming);
 
   const rapier = useRapier();
   const {
@@ -33,6 +35,44 @@ export function Player() {
   const doJump = () => {
     playerRef.current.setLinvel({ x: 0, y: 8, z: 0 });
   };
+
+  const [aimingAnimation, setAimingAnimation] = useState(null);
+  const [aimingBackAnimation, setAimingBackAnimation] = useState(null);
+
+  const initAimingAnimation = () => {
+    const currentPosition = swayingObjectRef.current.position;
+    const finalPosition = new THREE.Vector3(-0.3, -0.01, 0);
+
+    const twAimingAnimation = new TWEEN.Tween(currentPosition)
+      .to(finalPosition, 200)
+      .easing(easing);
+
+    const twAimingBackAnimation = new TWEEN.Tween(finalPosition.clone())
+      .to(new THREE.Vector3(0, 0, 0), 200)
+      .easing(easing)
+      .onUpdate((position) => {
+        swayingObjectRef.current.position.copy(position);
+      });
+
+    setAimingAnimation(twAimingAnimation);
+    setAimingBackAnimation(twAimingBackAnimation);
+  }
+
+  useEffect(() => {
+    initAimingAnimation();
+  }, [swayingObjectRef]);
+
+  useEffect(() => {
+    if (isAiming) {
+      (swayingAnimation as any).stop();
+      (swayingAnimation as any).start();
+    } else if (isAiming === false) {
+      (aimingBackAnimation as any).start()
+        .onComplete(() => {
+          setAnimationParams();
+        });
+    }
+  }, [isAiming, aimingAnimation, aimingBackAnimation]);
 
   const setAnimationParams = () => {
     if (!swayingAnimation) return;

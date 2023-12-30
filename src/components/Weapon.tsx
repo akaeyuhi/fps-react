@@ -3,14 +3,27 @@ import * as TWEEN from '@tweenjs/tween.js';
 import { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { WeaponModel } from '../models/WeaponModel.jsx';
+import { create } from 'zustand';
+import { usePointerLockControlsStore } from '../App.tsx';
 
 const recoilAmount = 0.03;
 const recoilDuration = 100;
 const easing = TWEEN.Easing.Quadratic.Out;
+
+export interface AimingStore {
+  isAiming: null | boolean,
+  setIsAiming: (value: boolean | null) => void,
+}
+
+export const useAimingStore = create<AimingStore>((set) => ({
+  isAiming: null,
+  setIsAiming: (value: boolean | null) => set(() => ({ isAiming: value }))
+}));
 export function Weapon(props) {
   const [recoilAnimation, setRecoilAnimation] = useState(null);
   const [, setRecoilBackAnimation] = useState(null);
   const [isShooting, setIsShooting] = useState(false);
+  const setIsAiming = useAimingStore((state) => state.setIsAiming);
   const weaponRef = useRef<any>();
 
   useEffect(() => {
@@ -22,6 +35,18 @@ export function Weapon(props) {
       setIsShooting(false);
     });
   }, []);
+
+  const mouseButtonHandler = (button: string, state) => {
+    if (!usePointerLockControlsStore.getState().isLock) return;
+    switch (button) {
+    case SHOOT_BUTTON:
+      setIsShooting(state);
+      break;
+    case AIM_BUTTON:
+      setIsAiming(state);
+      break;
+    }
+  }
 
   const generateRecoilOffset = () => new THREE.Vector3(
     Math.random() * recoilAmount,
