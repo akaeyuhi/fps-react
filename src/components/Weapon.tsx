@@ -2,10 +2,12 @@ import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 import { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { WeaponModel } from '../models/WeaponModel.jsx';
 import { create } from 'zustand';
+import { WeaponModel } from '../models/WeaponModel.jsx';
 import { usePointerLockControlsStore } from '../App.tsx';
 
+const SHOOT_BUTTON = parseInt(import.meta.env.VITE_SHOOT_BUTTON, 10);
+const AIM_BUTTON = parseInt(import.meta.env.VITE_AIM_BUTTON, 10);
 const recoilAmount = 0.03;
 const recoilDuration = 100;
 const easing = TWEEN.Easing.Quadratic.Out;
@@ -15,29 +17,20 @@ export interface AimingStore {
   setIsAiming: (value: boolean | null) => void,
 }
 
-export const useAimingStore = create<AimingStore>((set) => ({
+export const useAimingStore = create<AimingStore>(set => ({
   isAiming: null,
-  setIsAiming: (value: boolean | null) => set(() => ({ isAiming: value }))
+  setIsAiming: (value: boolean | null) => set(() => ({ isAiming: value })),
 }));
 export function Weapon(props) {
   const [recoilAnimation, setRecoilAnimation] = useState(null);
   const [, setRecoilBackAnimation] = useState(null);
   const [isShooting, setIsShooting] = useState(false);
-  const setIsAiming = useAimingStore((state) => state.setIsAiming);
+  const setIsAiming = useAimingStore(state => state.setIsAiming);
   const weaponRef = useRef<any>();
 
-  useEffect(() => {
-    document.addEventListener('mousedown', () => {
-      setIsShooting(true);
-    });
-
-    document.addEventListener('mouseup', () => {
-      setIsShooting(false);
-    });
-  }, []);
-
-  const mouseButtonHandler = (button: string, state) => {
+  const mouseButtonHandler = (button: number, state: boolean) => {
     if (!usePointerLockControlsStore.getState().isLock) return;
+
     switch (button) {
     case SHOOT_BUTTON:
       setIsShooting(state);
@@ -46,7 +39,18 @@ export function Weapon(props) {
       setIsAiming(state);
       break;
     }
-  }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', ev => {
+      ev.preventDefault();
+      mouseButtonHandler(ev.button, true);
+    });
+    document.addEventListener('mouseup', ev => {
+      ev.preventDefault();
+      mouseButtonHandler(ev.button, false);
+    });
+  }, []);
 
   const generateRecoilOffset = () => new THREE.Vector3(
     Math.random() * recoilAmount,
