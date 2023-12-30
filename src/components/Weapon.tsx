@@ -6,6 +6,7 @@ import { WeaponModel } from '../models/WeaponModel.jsx';
 import { usePointerLockControlsStore } from '../store/LockContolsStore';
 import { useAimingStore } from '../store/AimingStore';
 import FlashShoot from '../assets/images/shoot.png';
+import ShootSound from '../assets/sounds/shoot_sound.wav';
 
 const SHOOT_BUTTON = parseInt(import.meta.env.VITE_SHOOT_BUTTON, 10);
 const AIM_BUTTON = parseInt(import.meta.env.VITE_AIM_BUTTON, 10);
@@ -20,6 +21,7 @@ export function Weapon(props) {
   const setIsAiming = useAimingStore(state => state.setIsAiming);
   const weaponRef = useRef<any>();
   const texture = useLoader(THREE.TextureLoader, FlashShoot);
+  const audio = new Audio(ShootSound);
 
   const [flashAnimation, setFlashAnimation] = useState(null);
 
@@ -32,6 +34,8 @@ export function Weapon(props) {
         break;
       case AIM_BUTTON:
         setIsAiming(state);
+        break;
+      default:
         break;
     }
   };
@@ -96,7 +100,7 @@ export function Weapon(props) {
       });
 
     setFlashAnimation(twFlashAnimation);
-  }
+  };
 
   useEffect(() => {
     initFlashAnimation();
@@ -104,6 +108,8 @@ export function Weapon(props) {
 
   const startShooting = () => {
     if (!recoilAnimation) return;
+
+    audio.play();
 
     (recoilAnimation as any).start();
     (flashAnimation as any).start();
@@ -124,12 +130,16 @@ export function Weapon(props) {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <group {...props}>
       <group ref={weaponRef}>
-        <mesh position={[0, 0.05, -2]} scale={[1, 1, 0]}>
-          <planeGeometry attach="geometry" args={[1, 1]}/>
-          <meshBasicMaterial attach="material" map={texture} transparent={true}
-                             opacity={flashOpacity}/>
+        <mesh position={[1.2, 0.6, -3]} scale={[1, 1, 0]}>
+          <planeGeometry attach="geometry" args={[1, 1]} />
+          <meshBasicMaterial
+            attach="material"
+            map={texture}
+            transparent
+            opacity={flashOpacity}
+          />
         </mesh>
-        <WeaponModel/>
+        <WeaponModel />
       </group>
     </group>
   );
