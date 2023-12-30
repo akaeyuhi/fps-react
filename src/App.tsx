@@ -2,21 +2,13 @@ import * as TWEEN from '@tweenjs/tween.js';
 import { PointerLockControls, Sky } from '@react-three/drei';
 import { Physics } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
-import { create } from 'zustand';
 import { Ground } from './components/Ground';
 import { Player } from './components/Player.tsx';
 import { Cubes } from './components/Cubes.tsx';
 import { WeaponModel } from './models/WeaponModel.jsx';
+import { usePointerLockControlsStore } from './store/LockContolsStore';
 
 const shadowOffset = 50;
-
-export interface LockControlsStore {
-  isLock: boolean
-}
-
-export const usePointerLockControlsStore = create<LockControlsStore>(() => ({
-  isLock: false,
-}));
 
 function App() {
   useFrame(() => {

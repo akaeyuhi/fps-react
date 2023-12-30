@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 import { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { create } from 'zustand';
 import { WeaponModel } from '../models/WeaponModel.jsx';
-import { usePointerLockControlsStore } from '../App.tsx';
+import { usePointerLockControlsStore } from '../store/LockContolsStore';
+import { useAimingStore } from '../store/AimingStore';
 
 const SHOOT_BUTTON = parseInt(import.meta.env.VITE_SHOOT_BUTTON, 10);
 const AIM_BUTTON = parseInt(import.meta.env.VITE_AIM_BUTTON, 10);
@@ -12,15 +12,6 @@ const recoilAmount = 0.03;
 const recoilDuration = 100;
 const easing = TWEEN.Easing.Quadratic.Out;
 
-export interface AimingStore {
-  isAiming: null | boolean,
-  setIsAiming: (value: boolean | null) => void,
-}
-
-export const useAimingStore = create<AimingStore>(set => ({
-  isAiming: null,
-  setIsAiming: (value: boolean | null) => set(() => ({ isAiming: value })),
-}));
 export function Weapon(props) {
   const [recoilAnimation, setRecoilAnimation] = useState(null);
   const [, setRecoilBackAnimation] = useState(null);

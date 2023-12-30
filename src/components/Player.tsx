@@ -4,8 +4,9 @@ import * as TWEEN from '@tweenjs/tween.js';
 import { CapsuleCollider, RigidBody, useRapier } from '@react-three/rapier';
 import { useEffect, useRef, useState } from 'react';
 import { useFrame, Vector3 } from '@react-three/fiber';
-import { useAimingStore, Weapon } from './Weapon.tsx';
+import { Weapon } from './Weapon.tsx';
 import { usePersonControls } from '../utils/hooks/usePersonControls.ts';
+import { useAimingStore } from '../store/AimingStore';
 
 const MOVE_SPEED = 5;
 const direction = new THREE.Vector3();
@@ -58,7 +59,7 @@ export function Player() {
     setAimingBackAnimation(twAimingBackAnimation);
   };
 
-  const setAnimationParams = () => {
+  const setSwayingAnimationParams = () => {
     if (!swayingAnimation) return;
 
     (swayingAnimation as any).stop();
@@ -84,7 +85,7 @@ export function Player() {
     } else if (isAiming === false) {
       (aimingBackAnimation as any).start()
         .onComplete(() => {
-          setAnimationParams();
+          setSwayingAnimationParams();
         });
     }
   }, [isAiming, aimingAnimation, aimingBackAnimation]);
@@ -94,7 +95,6 @@ export function Player() {
     const initialPosition = new THREE.Vector3(0, 0, 0);
     const newPosition = swayingNewPosition;
     const animationDuration = swayingDuration;
-    const easing = TWEEN.Easing.Quadratic.Out;
 
     const twSwayingAnimation = new TWEEN.Tween(currentPosition)
       .to(newPosition, animationDuration)
@@ -158,7 +158,7 @@ export function Player() {
   });
 
   useEffect(() => {
-    setAnimationParams();
+    setSwayingAnimationParams();
   }, [isMoving]);
 
   useEffect(() => {
