@@ -88,7 +88,7 @@ export function Player() {
           setSwayingAnimationParams();
         });
     }
-  }, [isAiming, aimingAnimation, aimingBackAnimation]);
+  }, [isAiming, aimingAnimation, aimingBackAnimation, swayingAnimation]);
 
   const initSwayingObjectAnimation = () => {
     const currentPosition = new THREE.Vector3(0, 0, 0);
