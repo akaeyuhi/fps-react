@@ -33,7 +33,9 @@ function App() {
 
   return (
     <>
-      <PointerLockControls onLock={pointerLockControlsLockHandler} onUnlock={pointerLockControlsUnlockHandler} />
+      <PointerLockControls
+        onLock={pointerLockControlsLockHandler}
+        onUnlock={pointerLockControlsUnlockHandler} />
       <Sky sunPosition={[100, 20, 100]} />
       <ambientLight intensity={1.5} />
       <directionalLight
