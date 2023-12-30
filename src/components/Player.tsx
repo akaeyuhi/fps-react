@@ -3,7 +3,7 @@ import * as RAPIER from '@dimforge/rapier3d-compat';
 import * as TWEEN from '@tweenjs/tween.js';
 import { CapsuleCollider, RigidBody, useRapier } from '@react-three/rapier';
 import { useEffect, useRef, useState } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, Vector3 } from '@react-three/fiber';
 import { useAimingStore, Weapon } from './Weapon.tsx';
 import { usePersonControls } from '../utils/hooks/usePersonControls.ts';
 
@@ -25,7 +25,7 @@ export function Player() {
   const [swayingNewPosition, setSwayingNewPosition] = useState(new THREE.Vector3(-0.005, 0.005, 0));
   const [swayingDuration, setSwayingDuration] = useState(1000);
   const [isMoving, setIsMoving] = useState(false);
-  const isAiming = useAimingStore((state) => state.isAiming);
+  const isAiming = useAimingStore(state => state.isAiming);
 
   const rapier = useRapier();
   const {
@@ -41,7 +41,7 @@ export function Player() {
 
   const initAimingAnimation = () => {
     const currentPosition = swayingObjectRef.current.position;
-    const finalPosition = new THREE.Vector3(-0.3, -0.01, 0);
+    const finalPosition = new THREE.Vector3(-0.352, 0.06, 0);
 
     const twAimingAnimation = new TWEEN.Tween(currentPosition)
       .to(finalPosition, 200)
@@ -50,29 +50,13 @@ export function Player() {
     const twAimingBackAnimation = new TWEEN.Tween(finalPosition.clone())
       .to(new THREE.Vector3(0, 0, 0), 200)
       .easing(easing)
-      .onUpdate((position) => {
+      .onUpdate((position: Vector3) => {
         swayingObjectRef.current.position.copy(position);
       });
 
     setAimingAnimation(twAimingAnimation);
     setAimingBackAnimation(twAimingBackAnimation);
-  }
-
-  useEffect(() => {
-    initAimingAnimation();
-  }, [swayingObjectRef]);
-
-  useEffect(() => {
-    if (isAiming) {
-      (swayingAnimation as any).stop();
-      (swayingAnimation as any).start();
-    } else if (isAiming === false) {
-      (aimingBackAnimation as any).start()
-        .onComplete(() => {
-          setAnimationParams();
-        });
-    }
-  }, [isAiming, aimingAnimation, aimingBackAnimation]);
+  };
 
   const setAnimationParams = () => {
     if (!swayingAnimation) return;
@@ -88,6 +72,22 @@ export function Player() {
       setSwayingNewPosition(() => new THREE.Vector3(-0.01, 0, 0));
     }
   };
+
+  useEffect(() => {
+    initAimingAnimation();
+  }, [swayingObjectRef]);
+
+  useEffect(() => {
+    if (isAiming) {
+      (swayingAnimation as any).stop();
+      (aimingAnimation as any).start();
+    } else if (isAiming === false) {
+      (aimingBackAnimation as any).start()
+        .onComplete(() => {
+          setAnimationParams();
+        });
+    }
+  }, [isAiming, aimingAnimation, aimingBackAnimation]);
 
   const initSwayingObjectAnimation = () => {
     const currentPosition = new THREE.Vector3(0, 0, 0);
