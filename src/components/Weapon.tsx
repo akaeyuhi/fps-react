@@ -9,12 +9,12 @@ import { useAimingStore } from '../store/AimingStore';
 const SHOOT_BUTTON = parseInt(import.meta.env.VITE_SHOOT_BUTTON, 10);
 const AIM_BUTTON = parseInt(import.meta.env.VITE_AIM_BUTTON, 10);
 const recoilAmount = 0.03;
-const recoilDuration = 100;
+const recoilDuration = 50;
 const easing = TWEEN.Easing.Quadratic.Out;
 
 export function Weapon(props) {
   const [recoilAnimation, setRecoilAnimation] = useState(null);
-  const [, setRecoilBackAnimation] = useState(null);
+  const [isRecoilAnimationFinished, setIsRecoilAnimationFinished] = useState(true);
   const [isShooting, setIsShooting] = useState(false);
   const setIsAiming = useAimingStore(state => state.setIsAiming);
   const weaponRef = useRef<any>();
@@ -49,34 +49,31 @@ export function Weapon(props) {
     Math.random() * recoilAmount,
   );
 
-  const generateNewPositionOfRecoil = currentPosition => {
+  const generateNewPositionOfRecoil = (currentPosition = new THREE.Vector3(0, 0, 0)) => {
     const recoilOffset = generateRecoilOffset();
     return currentPosition.clone().add(recoilOffset);
   };
 
   const initRecoilAnimation = () => {
     const currentPosition = new THREE.Vector3(0, 0, 0);
-    const initialPosition = new THREE.Vector3(0, 0, 0);
     const newPosition = generateNewPositionOfRecoil(currentPosition);
 
     const twRecoilAnimation = new TWEEN.Tween(currentPosition)
       .to(newPosition, recoilDuration)
       .easing(easing)
+      .repeat(1)
+      .yoyo(true)
       .onUpdate(() => {
         weaponRef.current.position.copy(currentPosition);
+      })
+      .onStart(() => {
+        setIsRecoilAnimationFinished(false);
+      })
+      .onComplete(() => {
+        setIsRecoilAnimationFinished(true);
       });
-
-    const twRecoilBackAnimation = new TWEEN.Tween(currentPosition)
-      .to(initialPosition, recoilDuration)
-      .easing(easing)
-      .onUpdate(() => {
-        weaponRef.current.position.copy(currentPosition);
-      });
-
-    twRecoilAnimation.chain(twRecoilBackAnimation);
 
     setRecoilAnimation(twRecoilAnimation);
-    setRecoilBackAnimation(twRecoilBackAnimation);
   };
 
   const startShooting = () => {
@@ -85,16 +82,12 @@ export function Weapon(props) {
 
   useEffect(() => {
     initRecoilAnimation();
-
-    if (isShooting) {
-      startShooting();
-    }
-  }, [isShooting]);
+  }, []);
 
   useFrame(() => {
     TWEEN.update();
 
-    if (isShooting) {
+    if (isShooting && isRecoilAnimationFinished) {
       startShooting();
     }
   });
