@@ -1,15 +1,18 @@
-// import { useState } from 'react'
+import * as TWEEN from '@tweenjs/tween.js';
 import { PointerLockControls, Sky } from '@react-three/drei';
 import { Physics } from '@react-three/rapier';
+import { useFrame } from '@react-three/fiber';
 import { Ground } from './components/Ground';
 import { Player } from './components/Player.tsx';
 import { Cubes } from './components/Cubes.tsx';
-import { WeaponModel } from './models/WeaponModel.tsx';
+import { WeaponModel } from './models/WeaponModel.jsx';
 
 const shadowOffset = 50;
 
 function App() {
-  // const [count, setCount] = useState(0)
+  useFrame(() => {
+    TWEEN.update();
+  });
 
   return (
     <>
@@ -31,7 +34,7 @@ function App() {
         <Player />
         <Cubes />
       </Physics>
-      <group position={[0, 3, 0]}>
+      <group position={[0, 3, 0]} scale={1}>
         <WeaponModel />
       </group>
     </>
