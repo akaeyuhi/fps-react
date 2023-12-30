@@ -19,8 +19,11 @@ export function Player() {
 
   const swayingObjectRef = useRef<any>();
   const [swayingAnimation, setSwayingAnimation] = useState(null);
-  const [swayingBackAnimation, setSwayingBackAnimation] = useState(null);
+  const [, setSwayingBackAnimation] = useState(null);
   const [isSwayingAnimationFinished, setIsSwayingAnimationFinished] = useState(true);
+  const [swayingNewPosition, setSwayingNewPosition] = useState(new THREE.Vector3(-0.005, 0.005, 0));
+  const [swayingDuration, setSwayingDuration] = useState(1000);
+  const [isMoving, setIsMoving] = useState(false);
 
   const rapier = useRapier();
   const {
@@ -31,11 +34,26 @@ export function Player() {
     playerRef.current.setLinvel({ x: 0, y: 8, z: 0 });
   };
 
+  const setAnimationParams = () => {
+    if (!swayingAnimation) return;
+
+    (swayingAnimation as any).stop();
+    setIsSwayingAnimationFinished(true);
+
+    if (isMoving) {
+      setSwayingDuration(() => 300);
+      setSwayingNewPosition(() => new THREE.Vector3(-0.05, 0, 0));
+    } else {
+      setSwayingDuration(() => 1000);
+      setSwayingNewPosition(() => new THREE.Vector3(-0.01, 0, 0));
+    }
+  };
+
   const initSwayingObjectAnimation = () => {
     const currentPosition = new THREE.Vector3(0, 0, 0);
     const initialPosition = new THREE.Vector3(0, 0, 0);
-    const newPosition = new THREE.Vector3(-0.05, 0, 0);
-    const animationDuration = 300;
+    const newPosition = swayingNewPosition;
+    const animationDuration = swayingDuration;
     const easing = TWEEN.Easing.Quadratic.Out;
 
     const twSwayingAnimation = new TWEEN.Tween(currentPosition)
@@ -90,19 +108,22 @@ export function Player() {
     objectInHandRef.current.position.copy(state.camera.position)
       .add(state.camera.getWorldDirection(rotation));
 
-    const isMoving = direction.length() > 0;
+    setIsMoving(direction.length() > 0);
 
-    if (isMoving && isSwayingAnimationFinished) {
+    if (swayingAnimation && isSwayingAnimationFinished) {
       setIsSwayingAnimationFinished(false);
-      if (swayingAnimation) { (swayingAnimation as any).start(); }
+      (swayingAnimation as any).start();
     }
-
     TWEEN.update();
   });
 
   useEffect(() => {
+    setAnimationParams();
+  }, [isMoving]);
+
+  useEffect(() => {
     initSwayingObjectAnimation();
-  }, []);
+  }, [swayingNewPosition, swayingDuration]);
 
   return (
     <>

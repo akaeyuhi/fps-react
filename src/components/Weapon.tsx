@@ -9,7 +9,7 @@ const recoilDuration = 100;
 const easing = TWEEN.Easing.Quadratic.Out;
 export function Weapon(props) {
   const [recoilAnimation, setRecoilAnimation] = useState(null);
-  const [recoilBackAnimation, setRecoilBackAnimation] = useState(null);
+  const [, setRecoilBackAnimation] = useState(null);
   const [isShooting, setIsShooting] = useState(false);
   const weaponRef = useRef<any>();
 
